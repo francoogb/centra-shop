@@ -1,0 +1,261 @@
+/* ============================================
+   FOOTER PREMIUM - CENTRALSHOP
+   Style: Tech Marketplace / Startup Modern
+   ============================================ */
+
+:root {
+    --f-bg-dark: #020617;
+    --f-bg-main: #0F172A;
+    --f-accent: #2563EB;
+    --f-accent-soft: #38BDF8;
+    --f-text-bright: #E5E7EB;
+    --f-text-dim: #94A3B8;
+    --f-border: rgba(255, 255, 255, 0.08);
+    --f-benefits-bg: #F8FAFC;
+    --f-font-main: 'Inter', 'Lato', sans-serif;
+}
+
+/* --- BARRA DE BENEFICIOS --- */
+.footer-benefits-bar {
+    background-color: var(--f-benefits-bg);
+    padding: 30px 0;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 0 15px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.benefit-item:last-child {
+    border-right: none;
+}
+
+.benefit-icon {
+    font-size: 1.75rem;
+    color: var(--f-bg-main);
+    display: flex;
+    align-items: center;
+}
+
+.benefit-content h6 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.benefit-content p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+/* --- FOOTER PRINCIPAL --- */
+.footer-main {
+    background: linear-gradient(180deg, var(--f-bg-main) 0%, var(--f-bg-dark) 100%);
+    color: var(--f-text-dim);
+    padding: 80px 0 40px;
+    font-family: var(--f-font-main);
+}
+
+.footer-col-title {
+    color: var(--f-text-bright);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
+/* Branding Column */
+.footer-brand .brand-logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.footer-brand .brand-central { color: #ffffff; }
+.footer-brand .brand-shop { color: var(--f-accent); }
+
+.footer-brand p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 12px;
+}
+
+.social-btn {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--f-border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--f-text-dim);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+    background: var(--f-accent);
+    color: white;
+    border-color: var(--f-accent);
+    transform: translateY(-3px);
+}
+
+/* Links Columns */
+.footer-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links-list li {
+    margin-bottom: 12px;
+}
+
+.footer-links-list a {
+    color: var(--f-text-dim);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.footer-links-list a:hover {
+    color: var(--f-accent-soft);
+    padding-left: 4px;
+}
+
+/* Newsletter Column */
+.newsletter-text {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.f-newsletter-form .input-group {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--f-border);
+    border-radius: 12px;
+    padding: 5px;
+    transition: all 0.3s ease;
+}
+
+.f-newsletter-form .input-group:focus-within {
+    border-color: var(--f-accent);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.f-newsletter-form .form-control {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+}
+
+.f-newsletter-form .form-control::placeholder {
+    color: #4b5563;
+}
+
+.f-newsletter-form .btn-submit {
+    background: var(--f-accent);
+    border: none;
+    border-radius: 8px !important;
+    padding: 10px 18px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.f-newsletter-form .btn-submit:hover {
+    background: #1d4ed8;
+    transform: scale(1.02);
+}
+
+.newsletter-note {
+    font-size: 0.75rem;
+    margin-top: 12px;
+    color: #4b5563;
+}
+
+/* --- FOOTER INFERIOR --- */
+.footer-bottom {
+    padding: 30px 0;
+    border-top: 1px solid var(--f-border);
+    margin-top: 60px;
+}
+
+.footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.copyright {
+    font-size: 0.85rem;
+}
+
+.payment-methods {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.5rem;
+    color: var(--f-text-dim);
+}
+
+.country-selector {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--f-border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.85rem;
+    color: var(--f-text-bright);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 991.98px) {
+    .benefit-item {
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 15px 0;
+        justify-content: center;
+    }
+    .benefit-item:last-child {
+        border-bottom: none;
+    }
+    .footer-col {
+        margin-bottom: 40px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .footer-bottom-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .payment-methods {
+        order: 2;
+    }
+    .copyright {
+        order: 3;
+    }
+}

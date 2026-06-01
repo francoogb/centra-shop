@@ -1,0 +1,33 @@
+# CentralShop
+
+> Tienda online en Chile de tecnología, hogar, belleza y más. Compra fácil y seguro por WhatsApp. Envíos a todo el país con Starken y Chilexpress.
+
+CentralShop es una tienda de comercio electrónico chilena que vende productos de tecnología, gadgets, electrodomésticos de cocina, hogar y confort, belleza y cuidado personal, seguridad y vigilancia, herramientas y camping. Los clientes consultan por WhatsApp y pueden pagar con tarjeta de crédito/débito o transferencia bancaria.
+
+## Páginas principales
+
+- [Inicio](https://centralshop.cl/)
+- [Catálogo completo](https://centralshop.cl/catalogo)
+- [Ofertas](https://centralshop.cl/catalogo/ofertas)
+- [Preguntas Frecuentes](https://centralshop.cl/preguntas-frecuentes)
+- [Envíos](https://centralshop.cl/envios)
+- [Cambios y Devoluciones](https://centralshop.cl/cambios)
+- [Medios de Pago](https://centralshop.cl/medios-de-pago)
+- [Contacto](https://centralshop.cl/contacto)
+- [Nosotros](https://centralshop.cl/nosotros)
+
+## Categorías de productos
+
+- Tecnología & Gadgets: TV Box, drones, parlantes Bluetooth, power banks
+- Hogar & Confort: calefactores, dispensadores de agua
+- Electrodomésticos de Cocina: licuadoras, hervidores, batidoras, sandwicheras
+- Belleza & Cuidado Personal: trimmers, alisadores, depiladoras, pistolas de masaje
+- Seguridad & Vigilancia: cámaras WiFi PTZ, cámaras panorámicas 360°
+- Herramientas & Accesorios: alargadores eléctricos
+- Camping & Aire Libre: anafes portátiles a gas
+
+## Información de contacto
+
+- WhatsApp: +56 9 4292 2528
+- Envíos: Starken y Chilexpress a todo Chile
+- País: Chile (CL)
