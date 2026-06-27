@@ -20,10 +20,60 @@
     </div>
 </div>
 
+{{-- ─── Barra de Filtros ─── --}}
+<div class="card border-0 shadow-sm rounded-4 mb-3 px-4 py-3" style="background:#1e293b;">
+    <div class="row g-2 align-items-center">
+        <div class="col-12 col-md-4">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text border-0" style="background:rgba(0,0,0,.3);color:#94a3b8;"><i class="bi bi-search"></i></span>
+                <input type="text" id="filter-search" class="form-control border-0 rounded-end" placeholder="Buscar por nombre…" style="background:rgba(0,0,0,.3);color:#f1f5f9;">
+            </div>
+        </div>
+        <div class="col-6 col-md-2">
+            <select id="filter-category" class="form-select form-select-sm border-0" style="background:rgba(0,0,0,.3);color:#f1f5f9;">
+                <option value="">Categoría</option>
+                @foreach($categories as $cat)
+                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <select id="filter-status" class="form-select form-select-sm border-0" style="background:rgba(0,0,0,.3);color:#f1f5f9;">
+                <option value="">Estado</option>
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+                <option value="out">Agotado</option>
+                <option value="low">Stock bajo</option>
+                <option value="flash">Oferta Flash</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <select id="filter-sort" class="form-select form-select-sm border-0" style="background:rgba(0,0,0,.3);color:#f1f5f9;">
+                <option value="newest">Más recientes</option>
+                <option value="oldest">Más antiguos</option>
+                <option value="name-az">Nombre A–Z</option>
+                <option value="name-za">Nombre Z–A</option>
+                <option value="price-asc">Precio ↑</option>
+                <option value="price-desc">Precio ↓</option>
+                <option value="stock-asc">Stock ↑</option>
+                <option value="stock-desc">Stock ↓</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2 d-flex gap-2">
+            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 w-100" onclick="clearFilters()">
+                <i class="bi bi-x-circle me-1"></i>Limpiar
+            </button>
+        </div>
+        <div class="col-12 col-md-12">
+            <div id="filter-count" class="text-muted" style="font-size:.78rem;"></div>
+        </div>
+    </div>
+</div>
+
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0" id="products-table">
                 <thead class="text-muted text-uppercase" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; background: #0f172a;">
                     <tr>
                         <th class="ps-4 py-3 border-0">Producto</th>
@@ -39,7 +89,14 @@
                 </thead>
                 <tbody>
                     @forelse($products as $product)
-                    <tr id="row-{{ $product->id }}">
+                    <tr id="row-{{ $product->id }}"
+                        data-name="{{ strtolower($product->name) }}"
+                        data-category="{{ $product->category_id }}"
+                        data-price="{{ $product->price }}"
+                        data-stock="{{ $product->stock }}"
+                        data-active="{{ $product->is_active ? '1' : '0' }}"
+                        data-flash="{{ $product->flash_sale ? '1' : '0' }}"
+                        data-created="{{ $product->created_at->timestamp }}">
                         <td class="ps-4 py-3 border-bottom border-secondary border-opacity-10">
                             <div class="d-flex align-items-center gap-3">
                                 <img src="{{ $product->image }}" class="rounded-3 shadow-sm object-fit-cover" width="45" height="45" alt="{{ $product->name }}">
@@ -361,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const dd = document.getElementById('dates-' + pid), was = this.checked;
             this.disabled = true;
             fetch(url, {method:'POST',headers:{'X-CSRF-TOKEN':csrf,'Accept':'application/json'}})
-            .then(r=>r.json()).then(d=>{ if(d.success){ if(dd) dd.style.display=d.flash_sale?'':'none'; } else this.checked=!was; })
+            .then(r=>r.json()).then(d=>{ if(d.success){ if(dd) dd.style.display=d.flash_sale?'':'none'; const row=this.closest('tr'); if(row) row.dataset.flash=d.flash_sale?'1':'0'; } else this.checked=!was; })
             .catch(()=>{ this.checked=!was; }).finally(()=>{ this.disabled=false; });
         });
     });
@@ -526,6 +583,80 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(()=>{ err.textContent='Error de conexión.'; err.classList.remove('d-none'); })
         .finally(()=>{ spin.classList.add('d-none'); this.disabled=false; });
     });
+});
+
+// ─── Filtros ─────────────────────────────────────────────────────────────────
+function applyFilters() {
+    const search   = document.getElementById('filter-search').value.toLowerCase().trim();
+    const category = document.getElementById('filter-category').value;
+    const status   = document.getElementById('filter-status').value;
+    const sort     = document.getElementById('filter-sort').value;
+
+    const tbody = document.querySelector('#products-table tbody');
+    const rows  = Array.from(tbody.querySelectorAll('tr[data-name]'));
+
+    let visible = 0;
+
+    rows.forEach(row => {
+        const name    = row.dataset.name;
+        const cat     = row.dataset.category;
+        const price   = parseFloat(row.dataset.price);
+        const stock   = parseInt(row.dataset.stock);
+        const active  = row.dataset.active === '1';
+        const flash   = row.dataset.flash  === '1';
+
+        let show = true;
+
+        if (search   && !name.includes(search))  show = false;
+        if (category && cat !== category)         show = false;
+
+        if (status === 'active'   && !active)       show = false;
+        if (status === 'inactive' && active)        show = false;
+        if (status === 'out'      && stock !== 0)   show = false;
+        if (status === 'low'      && (stock === 0 || stock > 10)) show = false;
+        if (status === 'flash'    && !flash)        show = false;
+
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+    });
+
+    // Ordenar filas visibles
+    const visibleRows = rows.filter(r => r.style.display !== 'none');
+    visibleRows.sort((a, b) => {
+        switch (sort) {
+            case 'oldest':    return parseInt(a.dataset.created) - parseInt(b.dataset.created);
+            case 'name-az':   return a.dataset.name.localeCompare(b.dataset.name);
+            case 'name-za':   return b.dataset.name.localeCompare(a.dataset.name);
+            case 'price-asc': return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+            case 'price-desc':return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+            case 'stock-asc': return parseInt(a.dataset.stock)   - parseInt(b.dataset.stock);
+            case 'stock-desc':return parseInt(b.dataset.stock)   - parseInt(a.dataset.stock);
+            default:          return parseInt(b.dataset.created) - parseInt(a.dataset.created); // newest
+        }
+    });
+    visibleRows.forEach(r => tbody.appendChild(r));
+
+    const total = rows.length;
+    const countEl = document.getElementById('filter-count');
+    countEl.textContent = visible === total
+        ? `${total} productos en total`
+        : `Mostrando ${visible} de ${total} productos`;
+}
+
+function clearFilters() {
+    document.getElementById('filter-search').value   = '';
+    document.getElementById('filter-category').value = '';
+    document.getElementById('filter-status').value   = '';
+    document.getElementById('filter-sort').value     = 'newest';
+    applyFilters();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    ['filter-search','filter-category','filter-status','filter-sort'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', applyFilters);
+    });
+    applyFilters();
 });
 </script>
 @endsection
