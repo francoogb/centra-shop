@@ -94,6 +94,7 @@
         justify-content: center;
         padding: 28px;
         overflow: hidden;
+        cursor: zoom-in;
     }
 
     .gallery-stage img {
@@ -101,6 +102,39 @@
         max-height: 350px;
         object-fit: contain;
         filter: drop-shadow(0 18px 30px rgba(0,0,0,0.35));
+        pointer-events: none;
+    }
+
+    .gallery-zoom-hint {
+        position: absolute;
+        bottom: 14px;
+        right: 14px;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: #fff;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+    }
+
+    .gallery-stage:hover .gallery-zoom-hint { opacity: 1; }
+
+    /* Modal lightbox imagen */
+    #imgLightboxModal .modal-content {
+        background: rgba(5,10,20,0.97);
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    #imgLightboxModal img {
+        max-height: 80vh;
+        object-fit: contain;
     }
 
     .discount-flag {
@@ -717,18 +751,20 @@
                             <div class="carousel-inner">
                                 <!-- Imagen Principal -->
                                 <div class="carousel-item active">
-                                    <div class="gallery-stage">
+                                    <div class="gallery-stage" onclick="openLightbox('{{ $product->image }}')">
                                         @if($hasDiscount)
                                             <span class="discount-flag">-{{ $discountPercent }}% oferta</span>
                                         @endif
                                         <img src="{{ $product->image }}" alt="{{ $product->name }}">
+                                        <span class="gallery-zoom-hint"><i class="bi bi-zoom-in"></i> Ver en grande</span>
                                     </div>
                                 </div>
                                 <!-- Galería Adicional -->
                                 @foreach($product->images as $img)
                                     <div class="carousel-item">
-                                        <div class="gallery-stage">
+                                        <div class="gallery-stage" onclick="openLightbox('{{ $img->image_path }}')">
                                             <img src="{{ $img->image_path }}" alt="{{ $product->name }}">
+                                            <span class="gallery-zoom-hint"><i class="bi bi-zoom-in"></i> Ver en grande</span>
                                         </div>
                                     </div>
                                 @endforeach
@@ -839,6 +875,16 @@
     </div>
 </div>
 
+{{-- Lightbox imagen grande --}}
+<div class="modal fade" id="imgLightboxModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 rounded-4 text-center p-2">
+            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" style="z-index:1;"></button>
+            <img id="lightbox-img" src="" alt="{{ $product->name }}" class="img-fluid rounded-3 w-100">
+        </div>
+    </div>
+</div>
+
 <div class="modal fade modal-buy-guide" id="buyGuideModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -926,6 +972,11 @@
 
 @push('scripts')
 <script>
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        new bootstrap.Modal(document.getElementById('imgLightboxModal')).show();
+    }
+
     function toggleDescription() {
         const container = document.getElementById('description-container');
         const btn = document.querySelector('.read-more-btn');
