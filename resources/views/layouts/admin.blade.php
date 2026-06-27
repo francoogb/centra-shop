@@ -162,8 +162,20 @@
                 <span class="ms-auto badge bg-danger rounded-pill" style="font-size:0.6rem;">ACTIVO</span>
             </a>
 
+            <div class="px-4 text-uppercase mb-2 mt-4" style="color: #64748b; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;">Cuenta</div>
+
+            <a href="{{ route('admin.profile') }}" class="sidebar-link {{ request()->routeIs('admin.profile') ? 'active' : '' }}">
+                <i class="bi bi-person-circle"></i> Mi Perfil
+            </a>
+
+            @if(auth()->user()->is_super_admin)
+            <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                <i class="bi bi-people-fill"></i> Usuarios
+            </a>
+            @endif
+
             <div class="px-4 text-uppercase mb-2 mt-4" style="color: #64748b; font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;">Sistema</div>
-            
+
             <a href="/" class="sidebar-link mt-auto text-info">
                 <i class="bi bi-box-arrow-left"></i> Volver a la Tienda
             </a>

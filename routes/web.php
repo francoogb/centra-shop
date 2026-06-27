@@ -486,6 +486,83 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         ]);
     })->name('admin.subscribers.campaign');
 
+    // Perfil del usuario logueado
+    Route::get('/profile', fn () => view('admin.profile'))->name('admin.profile');
+
+    Route::put('/profile', function (Request $request) {
+        $request->validate([
+            'name'  => 'required|string|max:100',
+            'email' => 'required|email|unique:users,email,' . auth()->id(),
+        ]);
+        auth()->user()->update($request->only('name', 'email'));
+        return response()->json(['success' => true]);
+    })->name('admin.profile.update');
+
+    Route::put('/profile/password', function (Request $request) {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password'     => 'required|min:8',
+        ]);
+        if (!\Illuminate\Support\Facades\Hash::check($request->current_password, auth()->user()->password)) {
+            return response()->json(['success' => false, 'message' => 'La contraseña actual es incorrecta.']);
+        }
+        auth()->user()->update(['password' => \Illuminate\Support\Facades\Hash::make($request->new_password)]);
+        return response()->json(['success' => true, 'message' => 'Contraseña actualizada correctamente.']);
+    })->name('admin.profile.password');
+
+    // Gestión de Usuarios (solo super admin)
+    Route::get('/users', function () {
+        if (!auth()->user()->is_super_admin) abort(403);
+        $users = \App\Models\User::latest()->get();
+        return view('admin.users.index', compact('users'));
+    })->name('admin.users.index');
+
+    Route::post('/users', function (Request $request) {
+        if (!auth()->user()->is_super_admin) abort(403);
+        $request->validate([
+            'name'     => 'required|string|max:100',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'is_super_admin' => 'boolean',
+        ]);
+        $user = \App\Models\User::create([
+            'name'           => $request->name,
+            'email'          => $request->email,
+            'password'       => \Illuminate\Support\Facades\Hash::make($request->password),
+            'is_super_admin' => $request->boolean('is_super_admin'),
+        ]);
+        return response()->json(['success' => true, 'user' => $user]);
+    })->name('admin.users.store');
+
+    Route::put('/users/{user}', function (\App\Models\User $user, Request $request) {
+        if (!auth()->user()->is_super_admin) abort(403);
+        $request->validate([
+            'name'           => 'required|string|max:100',
+            'email'          => 'required|email|unique:users,email,' . $user->id,
+            'password'       => 'nullable|min:8',
+            'is_super_admin' => 'boolean',
+        ]);
+        $data = [
+            'name'           => $request->name,
+            'email'          => $request->email,
+            'is_super_admin' => $request->boolean('is_super_admin'),
+        ];
+        if ($request->filled('password')) {
+            $data['password'] = \Illuminate\Support\Facades\Hash::make($request->password);
+        }
+        $user->update($data);
+        return response()->json(['success' => true]);
+    })->name('admin.users.update');
+
+    Route::delete('/users/{user}', function (\App\Models\User $user) {
+        if (!auth()->user()->is_super_admin) abort(403);
+        if ($user->id === auth()->id()) {
+            return response()->json(['success' => false, 'message' => 'No puedes eliminarte a ti mismo.']);
+        }
+        $user->delete();
+        return response()->json(['success' => true]);
+    })->name('admin.users.destroy');
+
     // Gestión de Contactos WhatsApp
     Route::get('/orders', function () {
         $contacts    = \App\Models\WhatsappContact::with('product')->latest()->get();
