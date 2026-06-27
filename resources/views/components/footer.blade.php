@@ -98,7 +98,7 @@
             </div>
 
             {{-- Columna 2: Tienda --}}
-            <div class="col-6 col-lg-2">
+            <div class="col-12 col-sm-6 col-lg-2">
                 <div class="footer-col-title">Tienda</div>
                 <ul class="footer-nav">
                     <li><a href="{{ route('catalogo') }}">Catálogo completo</a></li>
@@ -108,7 +108,7 @@
             </div>
 
             {{-- Columna 3: Soporte --}}
-            <div class="col-6 col-lg-2">
+            <div class="col-12 col-sm-6 col-lg-2">
                 <div class="footer-col-title">Soporte</div>
                 <ul class="footer-nav">
                     <li><a href="{{ route('contacto') }}">Contacto</a></li>
