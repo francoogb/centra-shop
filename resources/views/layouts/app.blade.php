@@ -877,8 +877,12 @@
                 min-height: 68px;
             }
 
-            .store-brand-copy {
+            .store-brand-subtitle {
                 display: none;
+            }
+
+            .store-brand-title {
+                font-size: 1.35rem;
             }
 
             .mobile-sidebar .store-brand-copy {
