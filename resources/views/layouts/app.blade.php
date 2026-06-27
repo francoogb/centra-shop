@@ -952,13 +952,13 @@
             <a href="{{ route('home_inicio') }}" class="mobile-nav-item" onclick="closeMobileSidebar()">
                 <i class="bi bi-house-door"></i> Inicio
             </a>
-            <a href="{{ route('catalogo', 'ofertas') }}" class="mobile-nav-item" onclick="closeMobileSidebar()">
+            <a href="{{ route('catalogo') }}" class="mobile-nav-item" onclick="closeMobileSidebar()">
                 <i class="bi bi-fire"></i> Ofertas
             </a>
             <a href="{{ route('catalogo') }}" class="mobile-nav-item" onclick="closeMobileSidebar()">
                 <i class="bi bi-grid"></i> Categorias
             </a>
-            <a href="#site-footer" class="mobile-nav-item" onclick="closeMobileSidebar()">
+            <a href="{{ route('contacto') }}" class="mobile-nav-item" onclick="closeMobileSidebar()">
                 <i class="bi bi-chat-dots"></i> Contacto
             </a>
 
