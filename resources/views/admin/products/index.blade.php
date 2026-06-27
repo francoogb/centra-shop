@@ -99,7 +99,18 @@
                         data-created="{{ $product->created_at->timestamp }}">
                         <td class="ps-4 py-3 border-bottom border-secondary border-opacity-10">
                             <div class="d-flex align-items-center gap-3">
-                                <img src="{{ $product->image }}" class="rounded-3 shadow-sm object-fit-cover" width="45" height="45" alt="{{ $product->name }}">
+                                <div class="position-relative" style="width:45px;height:45px;flex-shrink:0;">
+                                    <img src="{{ $product->image }}" class="rounded-3 shadow-sm object-fit-cover w-100 h-100" alt="{{ $product->name }}">
+                                    <button type="button"
+                                        class="position-absolute top-0 start-0 w-100 h-100 border-0 p-0 rounded-3 d-flex align-items-center justify-content-center img-preview-btn"
+                                        style="background:rgba(0,0,0,0);transition:background .2s;cursor:zoom-in;"
+                                        data-img="{{ $product->image }}"
+                                        data-name="{{ $product->name }}"
+                                        onmouseover="this.style.background='rgba(0,0,0,.5)';this.querySelector('i').style.opacity='1'"
+                                        onmouseout="this.style.background='rgba(0,0,0,0)';this.querySelector('i').style.opacity='0'">
+                                        <i class="bi bi-zoom-in text-white" style="font-size:1.1rem;opacity:0;transition:opacity .2s;pointer-events:none;"></i>
+                                    </button>
+                                </div>
                                 <div>
                                     <h6 class="mb-0 fw-semibold">
                                         @if($product->is_book)<i class="bi bi-book-half text-primary me-1" title="Es Libro"></i>@endif
@@ -217,6 +228,23 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+{{-- ════════════════════════════════════════════════════════
+     MODAL: Preview de Imagen
+════════════════════════════════════════════════════════ --}}
+<div class="modal fade" id="imgPreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:520px;">
+        <div class="modal-content border-0 rounded-4 shadow-lg" style="background:#0f172a;">
+            <div class="modal-header border-0 px-4 pt-4 pb-2">
+                <h6 class="modal-title fw-semibold text-white" id="preview-modal-title"></h6>
+                <button type="button" class="btn-close btn-close-white opacity-50" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-3 text-center">
+                <img id="preview-modal-img" src="" alt="" class="img-fluid rounded-3 shadow-sm" style="max-height:420px;object-fit:contain;background:#1e293b;">
+            </div>
         </div>
     </div>
 </div>
@@ -410,6 +438,17 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+
+    // ─── Preview Imagen ──────────────────────────────────────────────────
+    const previewModal = new bootstrap.Modal(document.getElementById('imgPreviewModal'));
+    document.querySelectorAll('.img-preview-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.getElementById('preview-modal-img').src   = this.dataset.img;
+            document.getElementById('preview-modal-img').alt   = this.dataset.name;
+            document.getElementById('preview-modal-title').textContent = this.dataset.name;
+            previewModal.show();
+        });
+    });
 
     // ─── Flash Toggle ────────────────────────────────────────────────────
     document.querySelectorAll('.flash-toggle').forEach(toggle => {

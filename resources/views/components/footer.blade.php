@@ -58,6 +58,20 @@
         transition: background 0.2s ease;
     }
     .country-selector:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 767.98px) {
+        .site-footer .footer-brand-desc { max-width: 100% !important; }
+        .site-footer .footer-social { justify-content: flex-start; }
+        .site-footer .footer-col-title,
+        .site-footer .footer-nav,
+        .site-footer .footer-newsletter-title,
+        .site-footer .footer-newsletter-desc { text-align: left !important; }
+        .footer-bottom .col-md-6:first-child p { text-align: left !important; }
+        .footer-bottom .col-md-6:last-child {
+            justify-content: flex-start !important;
+        }
+    }
 </style>
 
 
@@ -124,10 +138,10 @@
     <div class="footer-bottom">
         <div class="container">
             <div class="row align-items-center g-3">
-                <div class="col-md-6 text-center text-md-start">
+                <div class="col-md-6 text-start">
                     <p>© {{ now()->format('Y') }} CentralShop. Calidad garantizada.</p>
                 </div>
-                <div class="col-md-6 d-flex justify-content-center justify-content-md-end gap-3">
+                <div class="col-md-6 d-flex justify-content-start justify-content-md-end gap-3">
                     <div class="payment-methods border-0 bg-transparent p-0">
                         <img src="{{ asset('img/icono/logoscards.png') }}" alt="Métodos de pago" style="max-height: 50px; width: auto; filter: contrast(1.1) brightness(1.1);">
                     </div>
