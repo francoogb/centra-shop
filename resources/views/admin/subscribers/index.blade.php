@@ -79,18 +79,26 @@
 
     <div class="col-lg-9">
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-            <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between" style="background:#0f172a;">
+            <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between gap-2" style="background:#0f172a;">
                 <span class="fw-semibold small text-muted text-uppercase" style="letter-spacing:1px;">Lista de Suscriptores</span>
-                <button class="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold" onclick="exportToCSV()">
-                    <i class="bi bi-file-earmark-excel me-1"></i> Exportar CSV
-                </button>
+                <div class="d-flex gap-2">
+                    <button id="btn-bulk-delete-subs" class="btn btn-sm btn-danger rounded-pill px-3 fw-semibold d-none" onclick="bulkDeleteSubs()">
+                        <i class="bi bi-trash me-1"></i> Eliminar seleccionados
+                    </button>
+                    <button class="btn btn-sm btn-outline-success rounded-pill px-3 fw-semibold" onclick="exportToCSV()">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Exportar CSV
+                    </button>
+                </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="text-muted text-uppercase" style="font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; background: #0f172a;">
                             <tr>
-                                <th class="ps-4 py-3 border-0">Correo Electrónico</th>
+                                <th class="ps-4 py-3 border-0">
+                                    <input type="checkbox" id="select-all-subs" class="form-check-input" onchange="toggleAllSubs(this)">
+                                </th>
+                                <th class="py-3 border-0">Correo Electrónico</th>
                                 <th class="py-3 border-0">Fecha de Registro</th>
                                 <th class="py-3 border-0 text-center">Estado</th>
                                 <th class="pe-4 py-3 border-0 text-end">Acciones</th>
@@ -99,6 +107,9 @@
                         <tbody>
                             @forelse($subscribers as $sub)
                             <tr id="row-{{ $sub->id }}">
+                                <td class="ps-4 py-3">
+                                    <input type="checkbox" class="form-check-input sub-check" value="{{ $sub->id }}" onchange="updateSubBulkBtn()">
+                                </td>
                                 <td class="ps-4 py-3">
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="bi bi-envelope text-primary"></i>
@@ -234,6 +245,33 @@ function showToast(msg, type) {
     inner.className = `toast show align-items-center text-white border-0 rounded-3 shadow-lg bg-${type}`;
     wrap.style.display = 'block';
     setTimeout(() => wrap.style.display = 'none', 5000);
+}
+
+function toggleAllSubs(cb) {
+    document.querySelectorAll('.sub-check').forEach(c => c.checked = cb.checked);
+    updateSubBulkBtn();
+}
+
+function updateSubBulkBtn() {
+    const any = document.querySelectorAll('.sub-check:checked').length > 0;
+    document.getElementById('btn-bulk-delete-subs').classList.toggle('d-none', !any);
+}
+
+function bulkDeleteSubs() {
+    const ids = [...document.querySelectorAll('.sub-check:checked')].map(c => c.value);
+    if (!ids.length) return;
+    if (!confirm(`¿Eliminar ${ids.length} suscriptor(es) seleccionado(s)?`)) return;
+    fetch('/admin/subscribers/bulk', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ ids }),
+    })
+    .then(r => r.json())
+    .then(() => location.reload());
 }
 
 function deleteSubscriber(id, email) {

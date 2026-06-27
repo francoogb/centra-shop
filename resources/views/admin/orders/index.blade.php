@@ -5,9 +5,10 @@
 @section('content')
 <div class="row mb-4">
     <div class="col-12 d-flex justify-content-between align-items-center">
-        <div>
-            <p class="text-muted mb-0">Clientes que hicieron clic en "Comprar por WhatsApp".</p>
-        </div>
+        <p class="text-muted mb-0">Clientes que hicieron clic en "Comprar por WhatsApp".</p>
+        <button id="btn-bulk-delete-orders" class="btn btn-sm btn-danger rounded-pill px-3 d-none" onclick="bulkDeleteOrders()">
+            <i class="bi bi-trash me-1"></i> Eliminar seleccionados
+        </button>
     </div>
 </div>
 
@@ -61,7 +62,10 @@
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light text-muted text-uppercase" style="font-size:.75rem;font-weight:600;letter-spacing:.5px;">
                     <tr>
-                        <th class="ps-4 py-3 border-0">#</th>
+                        <th class="ps-4 py-3 border-0">
+                            <input type="checkbox" id="select-all-orders" class="form-check-input" onchange="toggleAllOrders(this)">
+                        </th>
+                        <th class="py-3 border-0">#</th>
                         <th class="py-3 border-0">Fecha</th>
                         <th class="py-3 border-0">Producto</th>
                         <th class="py-3 border-0">Número</th>
@@ -72,7 +76,10 @@
                 <tbody>
                     @forelse($contacts as $contact)
                     <tr id="row-{{ $contact->id }}">
-                        <td class="ps-4 text-muted" style="font-size:.85rem;">{{ $contact->id }}</td>
+                        <td class="ps-4">
+                            <input type="checkbox" class="form-check-input order-check" value="{{ $contact->id }}" onchange="updateBulkBtn()">
+                        </td>
+                        <td class="text-muted" style="font-size:.85rem;">{{ $contact->id }}</td>
                         <td style="font-size:.85rem;">
                             <div class="fw-semibold">{{ $contact->created_at->format('d/m/Y') }}</div>
                             <div class="text-muted" style="font-size:.78rem;">{{ $contact->created_at->format('H:i') }}</div>
@@ -148,6 +155,33 @@ function updateStatus(id, status) {
             'Accept': 'application/json',
         },
         body: JSON.stringify({ status }),
+    })
+    .then(r => r.json())
+    .then(() => location.reload());
+}
+
+function toggleAllOrders(cb) {
+    document.querySelectorAll('.order-check').forEach(c => c.checked = cb.checked);
+    updateBulkBtn();
+}
+
+function updateBulkBtn() {
+    const any = document.querySelectorAll('.order-check:checked').length > 0;
+    document.getElementById('btn-bulk-delete-orders').classList.toggle('d-none', !any);
+}
+
+function bulkDeleteOrders() {
+    const ids = [...document.querySelectorAll('.order-check:checked')].map(c => c.value);
+    if (!ids.length) return;
+    if (!confirm(`¿Eliminar ${ids.length} registro(s) seleccionado(s)?`)) return;
+    fetch('/admin/orders/bulk', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ ids }),
     })
     .then(r => r.json())
     .then(() => location.reload());

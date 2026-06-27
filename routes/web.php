@@ -393,6 +393,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         return view('admin.subscribers.index', compact('subscribers'));
     })->name('admin.subscribers.index');
 
+    // Eliminar múltiples suscriptores (AJAX)
+    Route::delete('/subscribers/bulk', function (Request $request) {
+        $request->validate(['ids' => 'required|array', 'ids.*' => 'integer']);
+        \App\Models\Subscriber::whereIn('id', $request->ids)->delete();
+        return response()->json(['success' => true]);
+    })->name('admin.subscribers.bulk-destroy');
+
     // Eliminar Suscriptor (AJAX)
     Route::delete('/subscribers/{subscriber}', function (\App\Models\Subscriber $subscriber) {
         $subscriber->delete();
@@ -487,6 +494,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         $concretadas = $contacts->where('status', 'concretada')->count();
         return view('admin.orders.index', compact('contacts', 'total', 'pendientes', 'concretadas'));
     })->name('admin.orders.index');
+
+    Route::delete('/orders/bulk', function (Request $request) {
+        $request->validate(['ids' => 'required|array', 'ids.*' => 'integer']);
+        \App\Models\WhatsappContact::whereIn('id', $request->ids)->delete();
+        return response()->json(['success' => true]);
+    })->name('admin.orders.bulk-destroy');
 
     Route::patch('/orders/{contact}/status', function (\App\Models\WhatsappContact $contact, Request $request) {
         $contact->update(['status' => $request->status]);
