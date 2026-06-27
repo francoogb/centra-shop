@@ -502,6 +502,10 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         $request->validate([
             'current_password' => 'required',
             'new_password'     => 'required|min:8',
+        ], [
+            'current_password.required' => 'Ingresa tu contraseña actual.',
+            'new_password.required'     => 'Ingresa la nueva contraseña.',
+            'new_password.min'          => 'La nueva contraseña debe tener al menos 8 caracteres.',
         ]);
         if (!\Illuminate\Support\Facades\Hash::check($request->current_password, auth()->user()->password)) {
             return response()->json(['success' => false, 'message' => 'La contraseña actual es incorrecta.']);

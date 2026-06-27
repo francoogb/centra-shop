@@ -105,8 +105,12 @@ function changePassword() {
             new_password:     np,
         }),
     })
-    .then(r => r.json())
-    .then(data => {
+    .then(r => r.json().then(data => ({ status: r.status, data })))
+    .then(({ status, data }) => {
+        if (status === 422) {
+            const msg = Object.values(data.errors || {}).flat().join(' ');
+            return showAlert('pass-alert', msg, 'danger');
+        }
         showAlert('pass-alert', data.message, data.success ? 'success' : 'danger');
         if (data.success) {
             document.getElementById('current-password').value = '';
